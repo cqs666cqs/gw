@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>双链接在线检测 · 快捷跳转</title>
+    <title>高博之基官网</title>
     <style>
         * {
             box-sizing: border-box;
@@ -256,10 +256,10 @@
 <body>
     <div class="card" role="main">
         <h1>
-            🌐 链接心跳检测
-            <span>双站点</span>
+            🌐 高博之基官网
+            <span>官网</span>
         </h1>
-        <div class="sub">点击检测 · 在线即可跳转</div>
+        <div class="sub"></div>
 
         <!-- 链接监控列表 -->
         <div class="url-list" id="urlList">
@@ -478,7 +478,6 @@
                 checkAll();
             });
 
-            // 绑定两个跳转按钮，注意按钮禁用状态由setStatus管理，但点击事件仍然可用（如果启用）
             jump0.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (!jump0.disabled) {
@@ -492,12 +491,6 @@
                 }
             });
 
-            // 辅助：点击链接本身(新标签)，无论在线与否都允许用户尝试，但保留普通链接
-            // 链接本身已有href，不做额外控制。
-
-            // 可以预检测一次? 为了用户体验，延迟1秒后自动检测（用户也可手动）
-            // 但考虑到可能有误，也可以让用户主动点击。这里为了直观，自动检测一下。
-            // 但注意避免用户觉得突兀，加载完成后自动检测。
             window.addEventListener('load', () => {
                 // 稍微延迟后自动检测
                 setTimeout(() => {
@@ -505,10 +498,7 @@
                 }, 600);
             });
 
-            // 额外: 如果用户需要单独重新检测某个链接，可以双击卡片? 暂时不做，全局按钮够用。
-            // 但可以给每个卡片加双击检测？可选，但简洁为主。
 
-            // 添加刷新单个的隐藏彩蛋？保持简单。
         })();
     </script>
 </body>
