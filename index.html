@@ -255,32 +255,24 @@
 </head>
 <body>
     <div class="card" role="main">
-        <h1>
-            🌐 高博之基官网
-            <span>官网</span>
-        </h1>
+        <h1> 🌐 高博之基官网 <span>官网</span> </h1>
         <div class="sub"></div>
-
-        <!-- 链接监控列表 -->
         <div class="url-list" id="urlList">
-            <!-- 第一个链接: GitHub Pages -->
-            <div class="url-item" data-url="https://cqs20100605.github.io/gbzj-web/" data-index="0">
+            <div class="url-item" data-url="https://cqs666cqs.github.io/gbzj-web" data-index="0">
                 <div class="url-header">
                     <span class="status-badge checking" id="statusBadge0">
                         <span class="dot"></span>
                         <span class="status-msg" id="statusMsg0">准备检测</span>
                     </span>
-                    <a class="url-link" href="https://cqs20100605.github.io/gbzj-web/" target="_blank" rel="noopener" id="link0">cqs20100605.github.io/gbzj-web/</a>
+                    <a class="url-link" href="https://cqs666cqs.github.io/gbzj-web" target="_blank" rel="noopener" id="link0">cqs666cqs.github.io/gbzj-web</a>
                 </div>
                 <div class="btn-group">
-                    <button class="jump-btn" id="jumpBtn0" disabled data-url="https://cqs20100605.github.io/gbzj-web/">
+                    <button class="jump-btn" id="jumpBtn0" disabled data-url="https://cqs666cqs.github.io/gbzj-web">
                         <span class="favicon-placeholder">🔗</span> 跳转
                     </button>
                     <span class="status-text" id="statusDetail0">⏳ 未检测</span>
                 </div>
             </div>
-
-            <!-- 第二个链接: Cloudflare Pages -->
             <div class="url-item" data-url="https://gbzj.pages.dev/" data-index="1">
                 <div class="url-header">
                     <span class="status-badge checking" id="statusBadge1">
@@ -297,7 +289,6 @@
                 </div>
             </div>
         </div>
-<!-- 底部全局操作 -->
         <hr>
         <div class="footer-actions">
             <button class="global-check" id="checkAllBtn">
@@ -311,16 +302,12 @@
             点击检测后，在线链接的跳转按钮会启用。可直接点击链接或跳转按钮访问。
         </p>
     </div>
-
     <script>
         (function() {
-            // 定义两个需要检测的URL
             const URLS = [
-                'https://cqs20100605.github.io/gbzj-web/',
+                'https://cqs666cqs.github.io/gbzj-web',
                 'https://gbzj.pages.dev/'
             ];
-
-            // 获取DOM元素 (为了方便使用，缓存所有相关的)
             const badge0 = document.getElementById('statusBadge0');
             const badge1 = document.getElementById('statusBadge1');
             const msg0 = document.getElementById('statusMsg0');
@@ -332,112 +319,79 @@
             const link0 = document.getElementById('link0');
             const link1 = document.getElementById('link1');
             const checkAllBtn = document.getElementById('checkAllBtn');
-
-            // 辅助更新UI的函数：根据在线状态更新指定index (0或1)
             function setStatus(index, isOnline, errorMsg = '') {
                 const badge = index === 0 ? badge0 : badge1;
                 const msgSpan = index === 0 ? msg0 : msg1;
                 const detailSpan = index === 0 ? detail0 : detail1;
                 const jumpBtn = index === 0 ? jump0 : jump1;
-
-                // 移除现有的状态类 (online/offline/checking)
                 badge.classList.remove('online', 'offline', 'checking');
-                // 更新圆点和文字
                 if (isOnline === true) {
                     badge.classList.add('online');
                     msgSpan.innerText = '在线';
                     detailSpan.innerHTML = '✅ 可访问 | 状态 2xx/3xx';
-                    jumpBtn.disabled = false;   // 在线按钮可用
+                    jumpBtn.disabled = false;
                 } else if (isOnline === false) {
                     badge.classList.add('offline');
                     msgSpan.innerText = '离线';
-                    // 显示错误信息（如果有）
                     const err = errorMsg ? ` (${errorMsg})` : '';
                     detailSpan.innerHTML = `❌ 无法连接${err}`;
-                    jumpBtn.disabled = true;    // 离线不可跳转
+                    jumpBtn.disabled = true;
                 } else {
-                    // isOnline 为 null 表示检测中
                     badge.classList.add('checking');
                     msgSpan.innerText = '检测中...';
                     detailSpan.innerHTML = '⏳ 正在发送请求，请稍后';
-                    jumpBtn.disabled = true;     // 检测中不可用
+                    jumpBtn.disabled = true;
                 }
             }
-
-            // 重置为“未检测”状态 (页面初始或手动重置)
             function resetToUntested() {
-                // index 0
                 badge0.classList.remove('online', 'offline', 'checking');
-                badge0.classList.add('checking');  // 用灰色脉冲表示未检测但非离线
+                badge0.classList.add('checking');
                 msg0.innerText = '未检测';
                 detail0.innerHTML = '⏳ 点击下方按钮检测';
                 jump0.disabled = true;
-                // index 1
                 badge1.classList.remove('online', 'offline', 'checking');
                 badge1.classList.add('checking');
                 msg1.innerText = '未检测';
                 detail1.innerHTML = '⏳ 点击下方按钮检测';
                 jump1.disabled = true;
             }
-
-            // 检测单个链接是否在线 (通过fetch, 只检测响应, 不跨域限制)
             async function checkUrlStatus(url, index) {
-                setStatus(index, null); // null 表示检测中
-                // 设定超时 (10秒)
+                setStatus(index, null);
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
-
                 try {
-                    // 使用HEAD请求更快，但如果服务器不支持会自动降级? fetch HEAD如果服务器不支持会报错？我们用method: 'HEAD'，如果不支持可以fallback到GET
-                    // 为了更好的兼容，尝试HEAD，如果抛出异常（比如不允许HEAD）则尝试GET只获取headers
                     let response;
                     try {
                         response = await fetch(url, {
                             method: 'HEAD',
-                            mode: 'no-cors', // 注意: no-cors下无法读取状态，但可以检测是否服务器可达(如果网络错误会catch)。但no-cors下response.type='opaque'，status=0。所以我们需要区分
+                            mode: 'no-cors',
                             cache: 'no-cache',
                             signal: controller.signal
                         });
-                        // 因为no-cors我们无法拿到status，但能走到这里说明请求没有被浏览器阻止（跨域允许，但无法读具体状态）
-                        // 但是无法区分是200还是404，所以需要改用cors模式？但如果是严格跨域，cors需要预检。
-                        // 为了更可靠检测，我们尝试用cors模式，但如果是普通站点不支持cors，会失败。那就降级处理。
-                        // 改进策略: 先尝试用cors模式+HEAD，如果失败再用no-cors+GET判断能否连上。
-                        // 重新实现更准确的: 先尝试cors模式，出错再采用image/script方法? 这里采用fetch不带no-cors，读取状态。
                     } catch (e) {
-                        // 如果HEAD本身异常，再尝试其他方案。但上面的代码有问题，no-cors无法读取状态。我们重构。
                     }
-
-                    // 重新严谨实现: 先使用普通的fetch (cors模式, 但可能会被跨域阻止, 但至少可以知道网络错误)
-                    // 对于github pages和pages.dev, 它们会响应cors请求吗？一般允许。用cors模式更准确。
                     clearTimeout(timeoutId);
                     const secondController = new AbortController();
                     const secondTimeout = setTimeout(() => secondController.abort(), 8000);
-
                     try {
-                        // 使用GET请求，只获取headers (通过HEAD)
                         const res = await fetch(url, {
                             method: 'HEAD',
-                            mode: 'cors',       // 尝试cors, 如果服务器返回cors头则ok
+                            mode: 'cors',
                             credentials: 'omit',
                             cache: 'no-cache',
                             signal: secondController.signal
                         });
                         clearTimeout(secondTimeout);
-                        // 只要能够成功获取响应（状态码2xx/3xx都算在线）
                         if (res.ok || (res.status >= 200 && res.status < 400)) {
                             setStatus(index, true);
                         } else {
-                            // 4xx或5xx视为离线（但服务器返回了响应）
                             setStatus(index, false, `HTTP ${res.status}`);
                         }
                     } catch (err) {
                         clearTimeout(secondTimeout);
-                        // 跨域错误或网络错误，尝试用no-cors模式做最终探测 (只需确认是否服务器可达)
                         try {
                             const fallbackController = new AbortController();
                             const fallbackTimeout = setTimeout(() => fallbackController.abort(), 6000);
-                            // 使用no-cors + HEAD或者GET，虽然不能读状态，但如果请求没有被立即拒绝，通常代表能通
-                            // 但no-cors下成功进then，无法区分4xx。不过如果服务器完全不可达才会catch。
                             await fetch(url, {
                                 method: 'HEAD',
                                 mode: 'no-cors',
@@ -445,11 +399,8 @@
                                 signal: fallbackController.signal
                             });
                             clearTimeout(fallbackTimeout);
-                            // 如果是no-cors，没有报错代表能连上，保守判断为在线（但可能实际是404，但至少主机在线）
-                            // 我们取一个折中: 标记为 “可能在线”，但跳转交给用户，所以我们还是启用跳转（因为跳转本身是浏览器直接打开）
                             setStatus(index, true, '跨域限制，可能在线');
                         } catch (fallbackErr) {
-                            // 彻底无法连接
                             setStatus(index, false, '网络不通或超时');
                         }
                     }
@@ -458,25 +409,17 @@
                     setStatus(index, false, '检测异常');
                 }
             }
-
-            // 检测所有链接
             async function checkAll() {
-                // 同时检测两个
                 await Promise.all([
                     checkUrlStatus(URLS[0], 0),
                     checkUrlStatus(URLS[1], 1)
                 ]);
             }
-
-            // 初始化: 全部设为未检测状态
             resetToUntested();
-
-            // 绑定全局检测按钮
             checkAllBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 checkAll();
             });
-
             jump0.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (!jump0.disabled) {
@@ -489,15 +432,11 @@
                     window.open(URLS[1], '_blank', 'noopener,noreferrer');
                 }
             });
-
             window.addEventListener('load', () => {
-                // 稍微延迟后自动检测
                 setTimeout(() => {
                     checkAll();
                 }, 600);
             });
-
-
         })();
     </script>
 </body>
